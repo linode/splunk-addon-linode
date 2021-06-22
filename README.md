@@ -19,10 +19,20 @@ After an input is created, it will automatically begin polling Linode's API on t
 ## Currently Supported Inputs
 
 ### Account Events
-- Collect events in real-time from `/account/events` API endpoint
+
+- Collect events in real-time from `/account/events`
 
 ### Account Logins
+
 - Collect events in real-time from `/account/logins`
+
+### Account Notifications
+
+- Collect events in real-time from `/account/notifications`
+
+### Account Invoices
+
+- Collect events in real-time from `/account/invoices`
 
 ## Installation
 
@@ -34,10 +44,9 @@ WIP
     * Store the state of incomplete account events in order to create new logs for event updates
     * GET requests on entities referenced in the `/account/events` logs
         * Would cause significantly more API requests (maybe it should be opt-in?)
-    * GET `/account/invoices`
     * GET `/account/service-transfers`
     * GET `/account/entity-transfers`
-    
+        
 
 * Should we use [Splunk Add-on Builder](https://splunkbase.splunk.com/app/2962/)?
     * Pros

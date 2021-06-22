@@ -1,3 +1,11 @@
+import json
+import os
+from datetime import datetime
+import sys
+
+sys.path.append(os.path.join(os.environ['SPLUNK_HOME'], 'etc', 'apps', 'TA-linode', 'bin', 'deps'))
+sys.path.append(os.path.join(os.environ['SPLUNK_HOME'], 'etc', 'apps', 'TA-linode', 'bin', 'ta_linode_util'))
+
 from typing import Optional, List, Dict, Any
 
 from linode_api4 import LinodeClient
