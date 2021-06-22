@@ -34,6 +34,14 @@ After an input is created, it will automatically begin polling Linode's API on t
 
 - Collect events in real-time from `/account/invoices`
 
+### Account Payments
+
+- Collect events in real-time from `/account/payments`
+
+### Account Service Transfers
+
+- Collect events in real-time from `/account/service-transfers`
+
 ## Installation
 
 WIP

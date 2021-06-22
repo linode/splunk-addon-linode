@@ -101,3 +101,13 @@ modtime = 1624367901.300416000
 owner = admin
 version = 8.2.0
 modtime = 1624369589.576398000
+
+[props/linode_account_payments]
+owner = admin
+version = 8.2.0
+modtime = 1624372694.899371000
+
+[props/linode_service_transfers]
+owner = admin
+version = 8.2.0
+modtime = 1624373168.209630000
