@@ -14,6 +14,8 @@ from linode_api4.objects import DATE_FORMAT
 from datetime import datetime
 
 class BaseLinodeEventLogger:
+    _time_attr = '_time'
+
     def __init__(self, helper, ew):
         self._helper = helper
         self._ew = ew
@@ -40,17 +42,29 @@ class BaseLinodeEventLogger:
     def _set_datetime(self, new_time: datetime):
         self._helper.save_check_point('last_event', BaseLinodeEventLogger._format_time(new_time))
 
-    @staticmethod
-    def _filter_new_events(events: List[Dict[Any, str]], last_time: datetime, time_attr: str = 'created'):
+    def _filter_new_events(self, events: List[Dict[Any, str]], last_time: datetime):
         return [event for event in events
-                if BaseLinodeEventLogger._parse_time(event[time_attr]) > last_time]
+                if BaseLinodeEventLogger._parse_time(event[self._time_attr]) > last_time]
 
-    @staticmethod
-    def _get_newest_event_timestamp(events: List[Dict[Any, str]], time_attr: str = 'created') -> datetime:
-        return max(BaseLinodeEventLogger._parse_time(event[time_attr]) for event in events)
+    def _get_newest_event_timestamp(self, events: List[Dict[Any, str]]) -> datetime:
+        return max(BaseLinodeEventLogger._parse_time(event[self._time_attr]) for event in events)
 
-    def fetch_data(self, after_date: datetime):
-        return
+    def fetch_data(self, after_date: datetime) -> Any:
+        pass
 
     def collect_events(self):
-        return
+        old_datetime = self._get_old_datetime()
+        events = self.fetch_data(old_datetime)
+
+        if len(events) < 1:
+            return
+
+        self._set_datetime(self._get_newest_event_timestamp(events))
+
+        for event in events:
+            e = self._helper.new_event(
+                data=json.dumps(event),
+                time=self._parse_time(event[self._time_attr]).timestamp()
+            )
+
+            self._ew.write_event(e)

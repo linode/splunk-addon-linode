@@ -10,28 +10,14 @@ from linode_event_base import BaseLinodeEventLogger
 
 
 class AccountServiceTransfersHandler(BaseLinodeEventLogger):
+    _time_attr = 'created'
+
     def fetch_data(self, after_date: datetime):
         response = self._client.get('/account/service-transfers')
 
         if response is None or 'data' not in response:
             raise Exception('invalid response from linode api')
 
-        return self._filter_new_events(response['data'], after_date, time_attr='created')
+        result = self._filter_new_events(response['data'], after_date)
 
-    def collect_events(self):
-        old_datetime = self._get_old_datetime()
-
-        events = self.fetch_data(old_datetime)
-
-        if len(events) < 1:
-            return
-
-        self._set_datetime(self._get_newest_event_timestamp(events, time_attr='created'))
-
-        for event in events:
-            e = self._helper.new_event(
-                data=json.dumps(event),
-                time=self._parse_time(event['created']).timestamp()
-            )
-
-            self._ew.write_event(e)
+        return result
