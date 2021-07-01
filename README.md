@@ -52,8 +52,6 @@ WIP
     * Store the state of incomplete account events in order to create new logs for event updates
     * GET requests on entities referenced in the `/account/events` logs
         * Would cause significantly more API requests (maybe it should be opt-in?)
-    * GET `/account/service-transfers`
-    * GET `/account/entity-transfers`
         
 
 * Should we use [Splunk Add-on Builder](https://splunkbase.splunk.com/app/2962/)?

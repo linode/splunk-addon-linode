@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "body": null,
+      "entity": {
+        "id": 1234,
+        "label": "Linode not booting.",
+        "type": "ticket",
+        "url": "/support/tickets/1234"
+      },
+      "label": "You have an important ticket open!",
+      "message": "You have an important ticket open!",
+      "severity": "major",
+      "type": "ticket_important",
+      "until": null,
+      "when": "2017-01-01T00:01:01"
+    },
+    {
+      "body": null,
+      "entity": {
+        "id": 5678,
+        "label": "everything is broken",
+        "type": "ticket",
+        "url": "/support/tickets/5678"
+      },
+      "label": "You have an important ticket open!",
+      "message": "You have an important ticket open!",
+      "severity": "major",
+      "type": "ticket_important",
+      "until": null,
+      "when": "2019-01-01T00:01:01"
+    }
+  ],
+  "page": 1,
+  "pages": 1,
+  "results": 2
+}

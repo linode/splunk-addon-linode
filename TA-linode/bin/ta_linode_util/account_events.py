@@ -2,8 +2,11 @@ import json
 import os
 from datetime import datetime
 import sys
-sys.path.append(os.path.join(os.environ['SPLUNK_HOME'], 'etc', 'apps', 'TA-linode', 'bin', 'deps'))
-sys.path.append(os.path.join(os.environ['SPLUNK_HOME'], 'etc', 'apps', 'TA-linode', 'bin', 'ta_linode_util'))
+from pathlib import Path
+
+BIN_DIR = str(Path(os.path.dirname(os.path.realpath(__file__))).parent.absolute())
+sys.path.append(os.path.join(BIN_DIR, 'deps'))
+sys.path.append(os.path.join(BIN_DIR, 'ta_linode_util'))
 
 from linode_event_base import BaseLinodeEventLogger
 
@@ -12,7 +15,7 @@ class AccountEventsHandler(BaseLinodeEventLogger):
     _time_attr = 'created'
 
     def fetch_data(self, after_date: datetime):
-        response = self._client.get('/account/events', filters={
+        response = self._get('/account/events', filters={
             'created': {
                 '+gt': self._format_time(after_date)
             }

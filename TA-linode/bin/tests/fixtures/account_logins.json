@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "datetime": "2017-01-01T00:01:01",
+      "id": 1234,
+      "ip": "192.0.2.0",
+      "restricted": true,
+      "username": "example_user"
+    },
+    {
+      "datetime": "2019-01-01T00:01:01",
+      "id": 5678,
+      "ip": "192.0.1.0",
+      "restricted": true,
+      "username": "example_user"
+    }
+  ],
+  "page": 1,
+  "pages": 1,
+  "results": 2
+}
