@@ -15,7 +15,10 @@ from account_service_transfers import AccountServiceTransfersHandler
 from linode_event_base import BaseLinodeEventLogger
 from fixtures_util import request_fixture_override, request_fixture_override_func, load_fixture
 
+
 class TestAccountEvents(unittest.TestCase):
+    """Test Account event collectors"""
+
     def test_account_events(self):
         time_str = '2017-01-01T00:01:01'
         t = BaseLinodeEventLogger._parse_time(time_str)
