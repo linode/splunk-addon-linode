@@ -13,23 +13,9 @@ from account_notifications import AccountNotificationsHandler
 from account_payments import AccountPaymentsHandler
 from account_service_transfers import AccountServiceTransfersHandler
 from linode_event_base import BaseLinodeEventLogger
+from fixtures_util import request_fixture_override, request_fixture_override_func, load_fixture
 
 class TestAccountEvents(unittest.TestCase):
-    def request_fixture_override(self, handler, fixture_handler):
-        def f(url, *args, **kwargs):
-            return fixture_handler('get', url, *args, **kwargs)
-
-        handler._get = f
-
-    def load_fixture(self, fixture_name):
-        with open(os.path.join(FIXTURES_DIR, fixture_name)) as f:
-            content = f.read()
-
-        return json.loads(content)
-
-    def fixture_func(self, fixture_content):
-        return lambda method, url, *args, **kwargs: fixture_content
-
     def test_account_events(self):
         time_str = '2017-01-01T00:01:01'
         t = BaseLinodeEventLogger._parse_time(time_str)
@@ -40,10 +26,10 @@ class TestAccountEvents(unittest.TestCase):
                     '+gt': time_str
                 }
             }
-            return self.load_fixture('account_events.json')
+            return load_fixture(os.path.join(FIXTURES_DIR, 'account_events.json'))
 
         handler = AccountEventsHandler(fixture_mode=True)
-        self.request_fixture_override(handler, test_account_request)
+        request_fixture_override_func(handler, test_account_request)
         events = handler.fetch_data(t)
 
         assert len(events) == 1
@@ -54,14 +40,10 @@ class TestAccountEvents(unittest.TestCase):
         assert event['username'] == 'exampleUser'
 
     def test_account_invoices(self):
-        fixture = self.load_fixture('account_invoices.json')
+        handler = AccountInvoicesHandler(fixture_mode=True)
+        request_fixture_override(handler)
 
         t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
-
-        handler = AccountInvoicesHandler(fixture_mode=True)
-        self.request_fixture_override(handler,
-                                      lambda method, url, *args, **kwargs: fixture)
-
         events = handler.fetch_data(t)
         assert len(events) == 2
         assert events[0]['id'] == 123
@@ -77,13 +59,11 @@ class TestAccountEvents(unittest.TestCase):
         assert len(events) == 0
 
     def test_account_logins(self):
-        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
 
         handler = AccountLoginsHandler(fixture_mode=True)
-        self.request_fixture_override(handler,
-                                      lambda method, url, *args, **kwargs:
-                                      self.load_fixture('account_logins.json'))
+        request_fixture_override(handler)
 
+        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
         events = handler.fetch_data(t)
         assert len(events) == 2
         assert events[0]['id'] == 1234
@@ -102,13 +82,10 @@ class TestAccountEvents(unittest.TestCase):
         assert len(events) == 0
 
     def test_account_notifications(self):
-        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
-
         handler = AccountNotificationsHandler(fixture_mode=True)
-        self.request_fixture_override(handler,
-                                      self.fixture_func(
-                                          self.load_fixture('account_notifications.json')))
+        request_fixture_override(handler)
 
+        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
         events = handler.fetch_data(t)
         assert len(events) == 2
         assert events[0]['entity']['id'] == 1234
@@ -124,13 +101,10 @@ class TestAccountEvents(unittest.TestCase):
         assert len(events) == 0
 
     def test_account_payments(self):
-        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
-
         handler = AccountPaymentsHandler(fixture_mode=True)
-        self.request_fixture_override(handler,
-                                      self.fixture_func(
-                                        self.load_fixture('account_payments.json')))
+        request_fixture_override(handler)
 
+        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
         events = handler.fetch_data(t)
         assert len(events) == 2
         assert events[0]['id'] == 123
@@ -146,13 +120,10 @@ class TestAccountEvents(unittest.TestCase):
         assert len(events) == 0
 
     def test_account_service_transfers(self):
-        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
-
         handler = AccountServiceTransfersHandler(fixture_mode=True)
-        self.request_fixture_override(handler,
-                                      self.fixture_func(
-                                        self.load_fixture('account_service_transfers.json')))
+        request_fixture_override(handler)
 
+        t = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
         events = handler.fetch_data(t)
         assert len(events) == 2
         assert events[0]['token'] == '123'
