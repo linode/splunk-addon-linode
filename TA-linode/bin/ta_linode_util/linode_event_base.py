@@ -31,6 +31,9 @@ class BaseLinodeEventLogger:
         if not fixture_mode:
             self._client = LinodeClient(linode_token)
 
+            meta = list(self._helper.get_input_stanza().values())[0]
+            self._last_event_checkpoint = '{}_{}_last_event'.format(meta['sourcetype'], meta['name'])
+
     @staticmethod
     def _parse_time(t: str) -> datetime:
         return datetime.strptime(t, DATE_FORMAT)
@@ -44,7 +47,7 @@ class BaseLinodeEventLogger:
         return self._client.get(*args, **kwargs)
 
     def _get_old_datetime(self) -> Optional[datetime]:
-        old_datetime = self._helper.get_check_point('last_event')
+        old_datetime = self._helper.get_check_point(self._last_event_checkpoint)
 
         if old_datetime is None:
             config_start_time = self._helper.get_arg('start_date')
@@ -61,7 +64,7 @@ class BaseLinodeEventLogger:
         return BaseLinodeEventLogger._parse_time(old_datetime)
 
     def _set_datetime(self, new_time: datetime):
-        self._helper.save_check_point('last_event', BaseLinodeEventLogger._format_time(new_time))
+        self._helper.save_check_point(self._last_event_checkpoint, BaseLinodeEventLogger._format_time(new_time))
 
     def _filter_new_events(self, events: List[Dict[Any, str]], last_time: datetime):
         return [event for event in events
