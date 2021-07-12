@@ -46,8 +46,12 @@ class ModInputlinode_account_payments(modinput_wrapper.base_modinput.BaseModInpu
         For customized inputs, hard code the arguments here to hide argument detail from users.
         For other input types, arguments should be get from input_module. Defining new input types could be easier.
         """
-        scheme.add_argument(smi.Argument("linode_api_token", title="Linode API Token",
+        scheme.add_argument(smi.Argument("linode_account", title="Linode Account",
                                          description="",
+                                         required_on_create=True,
+                                         required_on_edit=False))
+        scheme.add_argument(smi.Argument("start_date", title="Start Date",
+                                         description="If specified, the event collector will collect all events that occurred after the given date.",
                                          required_on_create=False,
                                          required_on_edit=False))
         return scheme
@@ -65,6 +69,7 @@ class ModInputlinode_account_payments(modinput_wrapper.base_modinput.BaseModInpu
 
     def get_account_fields(self):
         account_fields = []
+        account_fields.append("linode_account")
         return account_fields
 
     def get_checkbox_fields(self):

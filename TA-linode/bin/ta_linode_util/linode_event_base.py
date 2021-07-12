@@ -22,7 +22,8 @@ class BaseLinodeEventLogger:
         linode_token = token
 
         if helper is not None and token is None:
-            linode_token = helper.get_arg('linode_api_token')
+            account = helper.get_arg('linode_account')
+            linode_token = account['linode_api_token']
 
         self._helper = helper
         self._ew = ew
@@ -46,7 +47,14 @@ class BaseLinodeEventLogger:
         old_datetime = self._helper.get_check_point('last_event')
 
         if old_datetime is None:
-            old_datetime = datetime.now()
+            config_start_time = self._helper.get_arg('start_date')
+
+            # Override the start time with the user-defined start time
+            if config_start_time is not None:
+                old_datetime = self._parse_time(config_start_time)
+            else:
+                old_datetime = datetime.now()
+
             self._set_datetime(old_datetime)
             return old_datetime
 

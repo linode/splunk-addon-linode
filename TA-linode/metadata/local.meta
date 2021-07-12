@@ -111,3 +111,28 @@ modtime = 1624372694.899371000
 owner = admin
 version = 8.2.0
 modtime = 1624373168.209630000
+
+[ta_linode_account/sdf]
+owner = admin
+version = 8.2.0
+modtime = 1626101457.689820000
+
+[ta_linode_account/test]
+owner = admin
+version = 8.2.0
+modtime = 1626103377.515009000
+
+[passwords/credential%3A__REST_CREDENTIAL__%23TA-linode%23configs%2Fconf-ta_linode_account%3Atest%60%60splunk_cred_sep%60%601%3A]
+owner = admin
+version = 8.2.0
+modtime = 1626103377.505359000
+
+[passwords/credential%3A__REST_CREDENTIAL__%23TA-linode%23configs%2Fconf-ta_linode_account%3Atest%60%60splunk_cred_sep%60%602%3A]
+owner = admin
+version = 8.2.0
+modtime = 1626103377.510776000
+
+[inputs/linode_account_events%3A%2F%2Ftest]
+owner = admin
+version = 8.2.0
+modtime = 1626104148.429814000
