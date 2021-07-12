@@ -2911,7 +2911,7 @@ label.checkbox >.btn > [class*="icon-"] {
   float: left;
 }
 .accumulator ul span.splIcon-arrow-e {
-  background-color: #65A637;
+  background-color: #1CB35B;
 }
 .accumulator ul.availableOptions li.selected, .accumulator .accDisabled ul li {
   color: #999;
@@ -4724,14 +4724,14 @@ body.print .header-table-docked,
   top: 52%;
   background: none;
   border: none;
-  color: #65A637;
+  color: #1CB35B;
   opacity: 1;
   left: 45px;
   font-size: 48px;
   z-index: 60;
 }
 .image-tour-container .carousel .carousel-control polygon {
-  fill: #65A637;
+  fill: #1CB35B;
 }
 .image-tour-container .carousel .carousel-control:hover polygon{
   fill: rgb(125, 195, 75);
@@ -4763,7 +4763,7 @@ body.print .header-table-docked,
   margin-bottom: 0px;
 }
 .image-tour-container .carousel .carousel-indicators li.active {
-  background-color: #65A637;
+  background-color: #1CB35B;
 }
 .image-tour-container .carousel .carousel-indicators li:first-child {
   margin-left: 0;
@@ -5077,8 +5077,8 @@ tr.introjs-showElement > th {
     overflow: visible;
     padding: 5px;
     margin: 0;
-    color: #65A637;
-    fill: #65A637;
+    color: #1CB35B;
+    fill: #1CB35B;
     text-decoration: none;
     font-size: 25px;
     cursor: pointer;
@@ -5115,7 +5115,7 @@ tr.introjs-showElement > th {
   color: #fff;
 }
 .introjs-skipbutton.done {
-    color: #65A637;
+    color: #1CB35B;
 }
 .introjs-prevbutton {
     left: 10px;
@@ -5156,7 +5156,7 @@ tr.introjs-showElement > th {
   text-decoration: none;
 }
 .introjs-bullets ul li a.active {
-  background: #65A637;
+  background: #1CB35B;
 }
 .introjs-progress {
     overflow: hidden;
@@ -5195,7 +5195,7 @@ tr.introjs-showElement > th {
     padding: 10px;
     margin-right: 20px;
     display: inline-block;
-    color: #65A637;
+    color: #1CB35B;
     border: 1px solid #eee;
 }
 .tour-link:last-child {
@@ -6562,10 +6562,10 @@ button.close {
 */
 .btn-primary {
     background-color: rgb(97, 159, 53);
-    background-image: linear-gradient(to bottom, #65A637, rgb(91, 149, 50));
+    background-image: linear-gradient(to bottom, #1CB35B, rgb(91, 149, 50));
     /*  Standard, IE10 */
     background-repeat: repeat-x;
-    background-color: #65A637;
+    background-color: #1CB35B;
     border: 1px solid rgb(77, 126, 42);
     border-bottom-color: rgb(77, 126, 42);
     border-top-color: rgb(77, 126, 42);
@@ -6575,7 +6575,7 @@ button.close {
 }
 .btn-primary:hover {
   background-color: rgb(114, 177, 59);
-  background-image: linear-gradient(to bottom, rgb(122, 184, 61), #65A637);
+  background-image: linear-gradient(to bottom, rgb(122, 184, 61), #1CB35B);
   /*  Standard, IE10 */
   background-repeat: repeat-x;
   background-color: rgb(125, 195, 75);
@@ -6588,7 +6588,7 @@ button.close {
 }
 .btn-primary.active {
   background-color: rgb(114, 177, 59);
-  background-image: linear-gradient(to bottom, rgb(122, 184, 61), #65A637);
+  background-image: linear-gradient(to bottom, rgb(122, 184, 61), #1CB35B);
   /*  Standard, IE10 */
   background-repeat: repeat-x;
   background-color: rgb(125, 195, 75);
@@ -7276,7 +7276,7 @@ body.locale-de .btn-group-radio.locale-responsive-layout .btn:last-child {
 }
 
 .alert-info .icon-alert {
-    color: #65A637;
+    color: #1CB35B;
 }
 
 .alert-info .icon-alert:before {
@@ -9341,10 +9341,10 @@ a.label:hover,
 }
 .progress .progress-bar {
   line-height: 16px;
-  background-color: #65A637;
+  background-color: #1CB35B;
 }
 .progress .progress-striped.progress-bar {
-  background-color: #65A637;
+  background-color: #1CB35B;
   background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
   background-size: 40px 40px;
 }
