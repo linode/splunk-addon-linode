@@ -10,7 +10,9 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 
 
 def request_url_to_fixture(url: str):
     """Convert a URL path to a fixtures filename ('/account/events' -> 'account_events')"""
-    return '_'.join([param for param in re.split('/|-', url) if param != ''])
+    params = url.split('?')
+
+    return '_'.join([param for param in re.split('/|-', params[0]) if param != ''])
 
 
 def request_fixture_override(handler, fixtures_dir=FIXTURES_DIR):

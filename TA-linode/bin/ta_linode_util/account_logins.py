@@ -14,11 +14,6 @@ class AccountLoginsHandler(BaseLinodeEventLogger):
     _time_attr = 'datetime'
 
     def fetch_data(self, after_date: datetime):
-        response = self._get('/account/logins')
+        result = self._get_paginated('/account/logins')
+        return self._filter_new_events(result, after_date)
 
-        if response is None or 'data' not in response:
-            raise Exception('invalid response from linode api')
-
-        result = self._filter_new_events(response['data'], after_date)
-
-        return result

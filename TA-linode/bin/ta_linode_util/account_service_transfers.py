@@ -15,11 +15,5 @@ class AccountServiceTransfersHandler(BaseLinodeEventLogger):
     _time_attr = 'created'
 
     def fetch_data(self, after_date: datetime):
-        response = self._get('/account/service-transfers')
-
-        if response is None or 'data' not in response:
-            raise Exception('invalid response from linode api')
-
-        result = self._filter_new_events(response['data'], after_date)
-
-        return result
+        result = self._get_paginated('/account/service-transfers')
+        return self._filter_new_events(result, after_date)

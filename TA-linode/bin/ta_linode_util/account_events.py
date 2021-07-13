@@ -15,15 +15,8 @@ class AccountEventsHandler(BaseLinodeEventLogger):
     _time_attr = 'created'
 
     def fetch_data(self, after_date: datetime):
-        response = self._get('/account/events', filters={
+        return self._get_paginated('/account/events', filters={
             'created': {
                 '+gt': self._format_time(after_date)
             }
         })
-
-        if response is None or 'data' not in response:
-            raise Exception('invalid response from linode api')
-
-        result = response['data']
-
-        return result

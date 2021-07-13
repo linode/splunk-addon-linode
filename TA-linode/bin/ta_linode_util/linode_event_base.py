@@ -10,7 +10,7 @@ sys.path.append(os.path.join(BIN_DIR, 'ta_linode_util'))
 
 from typing import Optional, List, Dict, Any
 
-from linode_api4 import LinodeClient
+from linode_api4 import LinodeClient, PaginatedList
 from linode_api4.objects import DATE_FORMAT
 
 from datetime import datetime
@@ -55,6 +55,22 @@ class BaseLinodeEventLogger:
     # Override for fixtures
     def _get(self, *args, **kwargs) -> Optional[Any]:
         return self._client.get(*args, **kwargs)
+
+    def _get_paginated(self, endpoint: str, **kwargs):
+        result = []
+
+        resp = self._get('{}?page_size=100&page=1'.format(endpoint), **kwargs)
+        result += resp['data']
+
+        num_pages = resp.get('pages')
+        if num_pages is None:
+            raise Exception('expected "pages" in response')
+
+        for page in range(2, num_pages + 1):
+            resp = self._get('{}?page_size=100&page={}'.format(endpoint, page), **kwargs)
+            result += resp['data']
+
+        return result
 
     def _get_old_datetime(self) -> Optional[datetime]:
         old_datetime = self._helper.get_check_point(self._last_event_checkpoint)

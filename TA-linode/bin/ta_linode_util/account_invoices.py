@@ -15,12 +15,6 @@ class AccountInvoicesHandler(BaseLinodeEventLogger):
     _time_attr = 'date'
 
     def fetch_data(self, after_date: datetime):
-        response = self._get('/account/invoices')
-
-        if response is None or 'data' not in response:
-            raise Exception('invalid response from linode api')
-
-        result = self._filter_new_events(response['data'], after_date)
-
-        return result
+        result = self._get_paginated('/account/invoices')
+        return self._filter_new_events(result, after_date)
 
