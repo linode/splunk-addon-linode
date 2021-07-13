@@ -44,6 +44,10 @@ class BaseLinodeEventLogger:
 
     @staticmethod
     def validate_inputs(params: Dict[str, Any]):
+        interval = params.get('interval')
+        if interval < 300:
+            raise ValueError('Interval must be at least 300 seconds to prevent API rate limiting')
+
         start_date = params.get('start_date')
 
         try:
