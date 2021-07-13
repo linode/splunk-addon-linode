@@ -1,21 +1,28 @@
+"""Base Module for creating Linode event collectors"""
+
+from datetime import datetime
+from typing import Optional, List, Dict, Any
 import json
 import os
-from datetime import datetime
 import sys
 from pathlib import Path
 
-BIN_DIR = str(Path(os.path.dirname(os.path.realpath(__file__))).parent.absolute())
-sys.path.append(os.path.join(BIN_DIR, 'deps'))
-sys.path.append(os.path.join(BIN_DIR, 'ta_linode_util'))
 
-from typing import Optional, List, Dict, Any
+def add_deps_path():
+    """Workaround to import local dependencies above top-level package"""
 
-from linode_api4 import LinodeClient, PaginatedList
+    bin_dir = str(Path(os.path.dirname(os.path.realpath(__file__))).parent.absolute())
+    sys.path.append(os.path.join(bin_dir, 'deps'))
+
+
+add_deps_path()
+
+from linode_api4 import LinodeClient
 from linode_api4.objects import DATE_FORMAT
 
-from datetime import datetime
-
 class BaseLinodeEventLogger:
+    """Base class for Linode event loggers"""
+
     _time_attr = '_time'
 
     def __init__(self, helper=None, ew=None, token=None, fixture_mode=False):
@@ -32,20 +39,23 @@ class BaseLinodeEventLogger:
             self._client = LinodeClient(linode_token)
 
             meta = list(self._helper.get_input_stanza().values())[0]
-            self._last_event_checkpoint = '{}_{}_last_event'.format(meta['sourcetype'], meta['name'])
+            self._last_event_checkpoint = '{}_{}_last_event'\
+                .format(meta['sourcetype'], meta['name'])
 
     @staticmethod
-    def _parse_time(t: str) -> datetime:
-        return datetime.strptime(t, DATE_FORMAT)
+    def _parse_time(to_parse: str) -> datetime:
+        return datetime.strptime(to_parse, DATE_FORMAT)
 
     @staticmethod
-    def _format_time(t: datetime) -> str:
-        return datetime.strftime(t, DATE_FORMAT)
+    def _format_time(to_format: datetime) -> str:
+        return datetime.strftime(to_format, DATE_FORMAT)
 
     @staticmethod
     def validate_inputs(params: Dict[str, Any]):
+        """Raises an error if any of the specified inputs are invalid"""
+
         interval = params.get('interval')
-        if interval < 300:
+        if int(interval) < 300:
             raise ValueError('Interval must be at least 300 seconds to prevent API rate limiting')
 
         start_date = params.get('start_date')
@@ -94,7 +104,8 @@ class BaseLinodeEventLogger:
         return BaseLinodeEventLogger._parse_time(old_datetime)
 
     def _set_datetime(self, new_time: datetime):
-        self._helper.save_check_point(self._last_event_checkpoint, BaseLinodeEventLogger._format_time(new_time))
+        self._helper.save_check_point(self._last_event_checkpoint,
+                                      BaseLinodeEventLogger._format_time(new_time))
 
     def _filter_new_events(self, events: List[Dict[Any, str]], last_time: datetime):
         return [event for event in events
@@ -105,9 +116,12 @@ class BaseLinodeEventLogger:
         return max(BaseLinodeEventLogger._parse_time(event[self._time_attr]) for event in events)
 
     def fetch_data(self, after_date: datetime) -> Any:
+        """Method to fetch a list of events for the event collector"""
         pass
 
     def collect_events(self):
+        """Method to collect and write the events to Splunk"""
+
         old_datetime = self._get_old_datetime()
         events = self.fetch_data(old_datetime)
 
@@ -117,9 +131,9 @@ class BaseLinodeEventLogger:
         self._set_datetime(self._get_newest_event_timestamp(events))
 
         for event in events:
-            e = self._helper.new_event(
+            splunk_event = self._helper.new_event(
                 data=json.dumps(event),
                 time=self._parse_time(event[self._time_attr]).timestamp()
             )
 
-            self._ew.write_event(e)
+            self._ew.write_event(splunk_event)

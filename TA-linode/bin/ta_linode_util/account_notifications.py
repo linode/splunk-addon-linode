@@ -1,17 +1,13 @@
-import json
-import os
+"""Module for collecting Linode Account Notifications"""
+
 from datetime import datetime
-import sys
-from pathlib import Path
 
-BIN_DIR = str(Path(os.path.dirname(os.path.realpath(__file__))).parent.absolute())
-sys.path.append(os.path.join(BIN_DIR, 'deps'))
-sys.path.append(os.path.join(BIN_DIR, 'ta_linode_util'))
-
-from linode_event_base import BaseLinodeEventLogger
+from .linode_event_base import BaseLinodeEventLogger
 
 
 class AccountNotificationsHandler(BaseLinodeEventLogger):
+    """Handler for collecting Linode Account Notifications"""
+
     _time_attr = 'when'
 
     def fetch_data(self, after_date: datetime):
