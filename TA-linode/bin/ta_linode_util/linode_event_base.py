@@ -42,6 +42,16 @@ class BaseLinodeEventLogger:
     def _format_time(t: datetime) -> str:
         return datetime.strftime(t, DATE_FORMAT)
 
+    @staticmethod
+    def validate_inputs(params: Dict[str, Any]):
+        start_date = params.get('start_date')
+
+        try:
+            if start_date is not None:
+                BaseLinodeEventLogger._parse_time(start_date)
+        except ValueError:
+            raise ValueError('Incorrect date format, should be YYYY-MM-DDTHH:MM:SS')
+
     # Override for fixtures
     def _get(self, *args, **kwargs) -> Optional[Any]:
         return self._client.get(*args, **kwargs)
