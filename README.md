@@ -1,65 +1,38 @@
-# splunk-app-linode
+# splunk-addon-linode
 
-This is a proof of concept Splunk app for collecting Linode events and metrics. This app was developed using [Splunk Add-on Builder](https://splunkbase.splunk.com/app/2962/).
+The Linode Add-on for Splunk collects account events from Linode. 
 
 ## Usage
 
-To install the app into a Splunk instance, follow the steps outlined in the [installation section](#installation).
+To install the app onto a Splunk instance, follow the steps outlined in the [installation section](#installation).
 
-Inputs are configured through a UI within splunk that allows for the creation, configuration, and deletion of [modular data input sources](#currently-supported-inputs). Each input can be configured with a custom Linode API Token and poll interval.
+Linode accounts can be can be configured in the `Configuration` tab of the Add-on. A read-only Linode API token is required when configuring an account. See the official [Linode API Documentation](https://www.linode.com/docs/guides/getting-started-with-the-linode-api/#get-an-access-token) for more details on generating an API token.
 
-![Inputs Interface](resources/inputs_ui.png)
-
-![Create Input Interface](resources/create_input.png)
-
-After an input is created, it will automatically begin polling Linode's API on the user-specified interval. Any new events can then be queried through Splunk.
-
-![Searched Event](resources/searched_event.png)
+Inputs are configured through the `Inputs` tab of the Add-on. Each input can have a specified index, Linode account, poll interval, and start date.  After an input is created, it will automatically begin polling Linode's API on the user-specified interval.
 
 ## Currently Supported Inputs
 
-### Account Events
-
-- Collect events in real-time from `/account/events`
-
-### Account Logins
-
-- Collect events in real-time from `/account/logins`
-
-### Account Notifications
-
-- Collect events in real-time from `/account/notifications`
-
-### Account Invoices
-
-- Collect events in real-time from `/account/invoices`
-
-### Account Payments
-
-- Collect events in real-time from `/account/payments`
-
-### Account Service Transfers
-
-- Collect events in real-time from `/account/service-transfers`
+Name | Description
+--- | ---
+Account Events|Collect events from `/account/events`
+Account Invoices|Collect invoices from `/account/invoices`
+Account Logins|Collect logins from `/account/logins`
+Account Notifications|Collect notifications from `/account/notifications`
+Account Payments|Collect payments from `/account/payments`
+Account Service Transfers|Collect service transfers from `/account/service-transfers`
 
 ## Installation
 
-WIP
+### Splunkbase
 
-## Next Steps
+TODO
 
-* What other endpoints/features should we support?
-    * Store the state of incomplete account events in order to create new logs for event updates
-    * GET requests on entities referenced in the `/account/events` logs
-        * Would cause significantly more API requests (maybe it should be opt-in?)
-        
+### Manual
 
-* Should we use [Splunk Add-on Builder](https://splunkbase.splunk.com/app/2962/)?
-    * Pros
-        * Eases development of new inputs
-        * Mitigates the need for human-maintained boilerplate code
-        * Offers some form of automated testing/validation (needs more research)
-        * Is fairly standard across Splunk apps (See [Microsoft Azure Add-on for Splunk](https://splunkbase.splunk.com/app/4882/))
-    * Cons
-        * Complicates development workflow
-        * Adds a lot of generated boilerplate code bloat
+The Splunk `.tgz` app file can be generated with the following command:
+
+```shell
+make build
+```
+
+In Splunk Enterprise, navigate to `manager/appinstall/_upload` and upload the generated `.tgz` file. Restart Splunk if prompted to do so, and the Add-on should be visible under the `Apps` drop-down.
