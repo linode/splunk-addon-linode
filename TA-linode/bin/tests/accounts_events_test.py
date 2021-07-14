@@ -5,7 +5,7 @@ import unittest
 
 from .fixtures_util import request_fixture_override_func, load_fixture, FIXTURES_DIR
 
-from ..ta_linode_util import BaseLinodeEventLogger, AccountEventsHandler
+from ..linode_events import BaseLinodeEventLogger, AccountEventsHandler
 
 
 class TestAccountEvents(unittest.TestCase):

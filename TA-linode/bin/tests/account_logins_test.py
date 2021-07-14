@@ -4,7 +4,7 @@ import unittest
 
 from .fixtures_util import request_fixture_override
 
-from ..ta_linode_util import AccountLoginsHandler, BaseLinodeEventLogger
+from ..linode_events import AccountLoginsHandler, BaseLinodeEventLogger
 
 
 class TestAccountLogins(unittest.TestCase):

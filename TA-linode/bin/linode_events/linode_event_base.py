@@ -3,22 +3,16 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 import json
-import os
 import sys
+import os
 from pathlib import Path
 
-
-def add_deps_path():
-    """Workaround to import local dependencies above top-level package"""
-
-    bin_dir = str(Path(os.path.dirname(os.path.realpath(__file__))).parent.absolute())
-    sys.path.append(os.path.join(bin_dir, 'deps'))
-
-
-add_deps_path()
+# Import local packages
+sys.path.append(str(Path(os.path.abspath(__file__)).parent.joinpath('deps')))
 
 from linode_api4 import LinodeClient
 from linode_api4.objects import DATE_FORMAT
+
 
 class BaseLinodeEventLogger:
     """Base class for Linode event loggers"""

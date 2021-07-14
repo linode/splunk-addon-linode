@@ -13,6 +13,6 @@ getdeps:
 
 lint:
     # Avoid linting pre-generated code
-	pylint TA-linode/bin/tests TA-linode/bin/ta_linode_util
+	pylint TA-linode/bin
 
 test: unittest

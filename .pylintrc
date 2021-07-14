@@ -8,4 +8,11 @@ disable=protected-access,
         raise-missing-from,
         unnecessary-pass,
         assignment-from-no-return,
-        wrong-import-position
+        wrong-import-position,
+        import-error,
+        wrong-import-order,
+        super-with-arguments,
+        no-self-use,
+        broad-except,
+        too-few-public-methods,
+        no-name-in-module

@@ -4,7 +4,7 @@ import unittest
 
 from .fixtures_util import request_fixture_override
 
-from ..ta_linode_util import AccountServiceTransfersHandler, BaseLinodeEventLogger
+from ..linode_events import AccountServiceTransfersHandler, BaseLinodeEventLogger
 
 
 class TestAccountServiceTransfers(unittest.TestCase):
