@@ -1,18 +1,22 @@
+"""Handler for Linode Account Events"""
+
 import os
-import sys
 import unittest
 
-from fixtures_util import request_fixture_override, request_fixture_override_func, load_fixture, FIXTURES_DIR
+from .fixtures_util import request_fixture_override_func, load_fixture, FIXTURES_DIR
 
-from account_events import AccountEventsHandler
-from linode_event_base import BaseLinodeEventLogger
+from ..ta_linode_util import BaseLinodeEventLogger, AccountEventsHandler
+
 
 class TestAccountEvents(unittest.TestCase):
     """Test Account events event collectors"""
 
-    def test_account_events(self):
+    @staticmethod
+    def test_account_events():
+        """Test that events are collected and filtered correctly"""
+
         time_str = '2017-01-01T00:01:01'
-        t = BaseLinodeEventLogger._parse_time(time_str)
+        collect_time = BaseLinodeEventLogger._parse_time(time_str)
 
         def test_account_request(method, url, *args, **kwargs):
             assert kwargs['filters'] == {
@@ -24,7 +28,7 @@ class TestAccountEvents(unittest.TestCase):
 
         handler = AccountEventsHandler(fixture_mode=True)
         request_fixture_override_func(handler, test_account_request)
-        events = handler.fetch_data(t)
+        events = handler.fetch_data(collect_time)
 
         assert len(events) == 1
 

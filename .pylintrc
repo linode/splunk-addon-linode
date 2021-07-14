@@ -1,0 +1,11 @@
+[MASTER]
+init-hook='import sys; sys.path.append("TA-linode/bin/deps")'
+
+[MESSAGES CONTROL]
+disable=protected-access,
+        unused-argument,
+        duplicate-code,
+        raise-missing-from,
+        unnecessary-pass,
+        assignment-from-no-return,
+        wrong-import-position
