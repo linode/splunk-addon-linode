@@ -1,0 +1,43 @@
+<dashboard>
+  <label>Getting Started</label>
+  <row>
+    <panel>
+      <title>Modular Input Setup</title>
+      <html>
+        <p>
+          Inputs can be configured in the <a href="/app/TA-linode/inputs">Inputs</a> section of the Linode Add-on.
+        </p>
+          <p>
+              Linode event inputs are configured using the following settings:
+          </p>
+        <p>
+          <table>
+              <tr>
+                  <td>Interval</td>
+                  <td>Determines how frequently the input should poll for event updates (minimum 300).</td>
+              </tr>
+              <tr>
+                  <td>Index</td>
+                  <td>The Splunk index to store new events in.</td>
+              </tr>
+              <tr>
+                  <td>Linode API Token</td>
+                  <td>A <b>read-only</b> Linode API Token created on the account to retrieve events from. See the official
+                      <a href="https://www.linode.com/docs/guides/getting-started-with-the-linode-api/#get-an-access-token">
+                        Linode API documentation
+                      </a>
+                  for more details.</td>
+              </tr>
+              <tr>
+                  <td>Start Date (Optional)</td>
+                  <td>The start date of events to be collected. This can be used to retroactively import events that occured prior to input creation.</td>
+              </tr>
+          </table>
+        </p>
+        <p>
+          After an event is created, it will automatically save new events to the configured index on the configured interval.
+        </p>
+      </html>
+    </panel>
+  </row>
+</dashboard>
