@@ -29,8 +29,7 @@ class BaseLinodeEventLogger:
         linode_token = token
 
         if helper is not None and token is None:
-            account = helper.get_arg('linode_account')
-            linode_token = account['linode_api_token']
+            linode_token = helper.get_arg('linode_api_token')
 
         self._helper = helper
         self._ew = ew

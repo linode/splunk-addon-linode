@@ -34,11 +34,14 @@ fields = [
         )
     ), 
     field.RestField(
-        'linode_account',
+        'linode_api_token',
         required=True,
-        encrypted=False,
+        encrypted=True,
         default=None,
-        validator=None
+        validator=validator.String(
+            min_len=0, 
+            max_len=8192, 
+        )
     ), 
     field.RestField(
         'start_date',
