@@ -14,4 +14,3 @@ def collect_events(helper, ew):
     from ta_linode_util.account_events import AccountEventsHandler
     handler = AccountEventsHandler(helper, ew)
     handler.collect_events()
-
