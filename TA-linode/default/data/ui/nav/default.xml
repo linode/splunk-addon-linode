@@ -1,5 +1,8 @@
 <nav search_view="search" color="#1CB35B">
-<view name="inputs" default="true" />
-<view name="configuration"/>
-<view name="search" label="Search"/>
+    <view name="inputs"/>
+    <view name="configuration"/>
+    <view name="search" label="Search"/>
+    <collection label="Documentation">
+        <view name="getting_started" default="true" />
+    </collection>
 </nav>
