@@ -2,7 +2,7 @@
 
 import unittest
 
-from .fixtures_util import request_fixture_override
+from .fixtures_util import request_fixture_override, MockHelper
 
 from ..ta_linode_util import AccountServiceTransfersHandler, BaseLinodeEventLogger
 
@@ -14,7 +14,7 @@ class TestAccountServiceTransfers(unittest.TestCase):
     def test_account_service_transfers():
         """Test that service transfers are collected and filtered correctly"""
 
-        handler = AccountServiceTransfersHandler(fixture_mode=True)
+        handler = AccountServiceTransfersHandler(helper=MockHelper(), fixture_mode=True)
         request_fixture_override(handler)
 
         collect_time = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')

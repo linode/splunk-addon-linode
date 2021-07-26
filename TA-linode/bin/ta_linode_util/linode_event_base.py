@@ -26,15 +26,13 @@ class BaseLinodeEventLogger:
     _time_attr = '_time'
 
     def __init__(self, helper=None, ew=None, token=None, fixture_mode=False):
-        linode_token = token
-
-        if helper is not None and token is None:
-            linode_token = helper.get_arg('linode_api_token')
 
         self._helper = helper
         self._ew = ew
 
         if not fixture_mode:
+            linode_token = token or helper.get_arg('linode_api_token')
+
             self._client = LinodeClient(linode_token)
 
             meta = list(self._helper.get_input_stanza().values())[0]
@@ -79,12 +77,14 @@ class BaseLinodeEventLogger:
         if num_pages is None:
             raise Exception('expected "pages" in response')
 
-        self._helper.log_debug('Paginated request to endpoint {} of {} pages has started'.format(endpoint, num_pages))
+        self._helper.log_debug('Paginated request to endpoint {} of {} pages has started'
+                               .format(endpoint, num_pages))
 
         for page in range(2, num_pages + 1):
             resp = self._get('{}?page_size=100&page={}'.format(endpoint, page), **kwargs)
             result += resp['data']
-            self._helper.log_debug('Made paginated request {} of {} to endpoint {}'.format(page, num_pages, endpoint))
+            self._helper.log_debug('Made paginated request {} of {} to endpoint {}'
+                                   .format(page, num_pages, endpoint))
 
         self._helper.log_debug('Completed paginated request to endpoint {}'.format(endpoint))
 
