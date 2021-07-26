@@ -8,4 +8,5 @@ disable=protected-access,
         raise-missing-from,
         unnecessary-pass,
         assignment-from-no-return,
-        wrong-import-position
+        wrong-import-position,
+        broad-except
