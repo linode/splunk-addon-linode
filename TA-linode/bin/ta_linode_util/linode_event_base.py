@@ -79,9 +79,14 @@ class BaseLinodeEventLogger:
         if num_pages is None:
             raise Exception('expected "pages" in response')
 
+        self._helper.log_debug('Paginated request to endpoint {} of {} pages has started'.format(endpoint, num_pages))
+
         for page in range(2, num_pages + 1):
             resp = self._get('{}?page_size=100&page={}'.format(endpoint, page), **kwargs)
             result += resp['data']
+            self._helper.log_debug('Made paginated request {} of {} to endpoint {}'.format(page, num_pages, endpoint))
+
+        self._helper.log_debug('Completed paginated request to endpoint {}'.format(endpoint))
 
         return result
 
@@ -127,7 +132,18 @@ class BaseLinodeEventLogger:
         if len(events) < 1:
             return
 
-        self._set_datetime(self._get_newest_event_timestamp(events))
+        new_datetime = self._get_newest_event_timestamp(events)
+
+        self._helper.log_info('Collected Linode events from {0} to {1}'.format(
+            old_datetime.strftime(DATE_FORMAT),
+            new_datetime.strftime(DATE_FORMAT)
+        ))
+
+        self._set_datetime(new_datetime)
+
+        self._helper.log_info('New checkpoint date set to {}'.format(
+            new_datetime
+        ))
 
         for event in events:
             splunk_event = self._helper.new_event(
