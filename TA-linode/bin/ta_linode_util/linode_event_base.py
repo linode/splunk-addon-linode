@@ -20,6 +20,8 @@ add_deps_path()
 from linode_api4 import LinodeClient
 from linode_api4.objects import DATE_FORMAT
 
+APP_ROOT = str(Path(os.path.dirname(os.path.realpath(__file__))).parent.parent.absolute())
+
 class BaseLinodeEventLogger:
     """Base class for Linode event loggers"""
 
@@ -33,7 +35,13 @@ class BaseLinodeEventLogger:
         if not fixture_mode:
             linode_token = token or helper.get_arg('linode_api_token')
 
-            self._client = LinodeClient(linode_token)
+            manifest = self._get_app_manifest()
+            addon_version = manifest.get('info').get('id').get('version')
+
+            self._client = LinodeClient(linode_token,
+                                        user_agent='SplunkAddonLinode/{version} '
+                                                   'https://github.com/linode/splunk-addon-linode'
+                                        .format(version=addon_version))
 
             meta = list(self._helper.get_input_stanza().values())[0]
             self._last_event_checkpoint = '{}_{}_last_event'\
@@ -62,6 +70,16 @@ class BaseLinodeEventLogger:
                 BaseLinodeEventLogger._parse_time(start_date)
         except ValueError:
             raise ValueError('Incorrect date format, should be YYYY-MM-DDTHH:MM:SS')
+
+    @staticmethod
+    def _get_app_manifest():
+        """Get a dict of all app manifest info"""
+
+        app_manifest = os.path.join(APP_ROOT, 'app.manifest')
+        with open(app_manifest, 'r') as file:
+            result = json.load(file)
+
+        return result
 
     # Override for fixtures
     def _get(self, *args, **kwargs) -> Optional[Any]:
