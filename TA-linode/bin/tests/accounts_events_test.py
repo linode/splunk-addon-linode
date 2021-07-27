@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from .fixtures_util import request_fixture_override_func, load_fixture, FIXTURES_DIR
+from .fixtures_util import request_fixture_override_func, load_fixture, FIXTURES_DIR, MockHelper
 
 from ..ta_linode_util import BaseLinodeEventLogger, AccountEventsHandler
 
@@ -26,7 +26,7 @@ class TestAccountEvents(unittest.TestCase):
             }
             return load_fixture(os.path.join(FIXTURES_DIR, 'account_events.json'))
 
-        handler = AccountEventsHandler(fixture_mode=True)
+        handler = AccountEventsHandler(helper=MockHelper(), fixture_mode=True)
         request_fixture_override_func(handler, test_account_request)
         events = handler.fetch_data(collect_time)
 

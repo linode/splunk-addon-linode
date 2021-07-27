@@ -2,7 +2,7 @@
 
 import unittest
 
-from .fixtures_util import request_fixture_override
+from .fixtures_util import request_fixture_override, MockHelper
 
 from ..ta_linode_util import AccountInvoicesHandler, BaseLinodeEventLogger
 
@@ -14,7 +14,7 @@ class TestAccountInvoices(unittest.TestCase):
     def test_account_invoices():
         """Test that invoices are collected correctly"""
 
-        handler = AccountInvoicesHandler(fixture_mode=True)
+        handler = AccountInvoicesHandler(helper=MockHelper(), fixture_mode=True)
         request_fixture_override(handler)
 
         collect_time = BaseLinodeEventLogger._parse_time('2016-01-01T00:01:01')
