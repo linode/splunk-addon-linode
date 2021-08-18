@@ -32,7 +32,3 @@ make build
 ```
 
 In Splunk Enterprise, navigate to `manager/appinstall/_upload` and upload the generated `.tgz` file. Restart Splunk if prompted to do so, and the Add-on should be visible under the `Apps` drop-down.
-
-## Contribution Guidelines
-
-Want to improve splunk-addon-linode? Please start [here](CONTRIBUTING.md).
