@@ -9,13 +9,13 @@
     },
     "author": [
       {
-        "name": "",
-        "email": null,
+        "name": "Linode",
+        "email": "dev-dx@linode.com",
         "company": null
       }
     ],
     "releaseDate": null,
-    "description": "",
+    "description": "The Linode Add-on for Splunk includes inputs for ingesting Linode account events into Splunk.",
     "classification": {
       "intendedAudience": null,
       "categories": [],
