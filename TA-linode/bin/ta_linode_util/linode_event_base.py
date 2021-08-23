@@ -60,8 +60,8 @@ class BaseLinodeEventLogger:
         """Raises an error if any of the specified inputs are invalid"""
 
         interval = params.get('interval')
-        if int(interval) < 30:
-            raise ValueError('Interval must be at least 30 seconds to prevent API rate limiting')
+        if int(interval) < 180:
+            raise ValueError('Interval must be at least 180 seconds.')
 
         start_date = params.get('start_date')
 

@@ -1,4 +1,5 @@
-<dashboard>
+<?xml version="1.0"?>
+<dashboard version="1.1">
     <label>Getting Started</label>
     <row>
         <panel>
@@ -15,7 +16,7 @@
                     <table>
                         <tr>
                             <td>Interval</td>
-                            <td>Determines how frequently the input should poll for event updates (minimum 300).</td>
+                            <td>Determines how frequently the input should poll for event updates (minimum 180s).</td>
                         </tr>
                         <tr>
                             <td>Index</td>
