@@ -2,7 +2,7 @@
     "meta": {
         "name": "TA-linode",
         "displayName": "Linode",
-        "version": "1.0.0",
+        "version": "0.0.1",
         "apiVersion": "3.0.0",
         "restRoot": "TA_linode",
         "schemaVersion": "0.0.2"
