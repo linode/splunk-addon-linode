@@ -5,12 +5,12 @@
     "id": {
       "group": null,
       "name": "TA-linode",
-      "version": "0.0.1"
+      "version": "0.0.2"
     },
     "author": [
       {
         "name": "Linode",
-        "email": "dev-dx@linode.com",
+        "email": null,
         "company": null
       }
     ],
