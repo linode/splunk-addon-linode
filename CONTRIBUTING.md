@@ -10,7 +10,9 @@ The [Linode Community](https://www.linode.com/community/questions/) is a great p
 
 ## How Do I Submit A (Good) Bug Report or Feature Request
 
-Please open a [github issue](https://guides.github.com/features/issues/) to report bugs or suggest features.
+Please open a [GitHub issue](https://github.com/linode/splunk-addon-linode/issues/new/choose) to report bugs or suggest features. 
+
+Please accurately fill out the appropriate GitHub issue form.
 
 When filing an issue or feature request, help us avoid duplication and redundant effort -- check existing open or recently closed issues first.
 
