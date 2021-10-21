@@ -23,9 +23,9 @@ Account Service Transfers|Collect service transfers from `/account/service-trans
 
 ## Installation
 
-### splunkbase
+### Splunkbase
 
-Install through [splunkbase](https://splunkbase.splunk.com/app/5707/#/details)
+Install through [Splunkbase](https://splunkbase.splunk.com/app/5707/#/details)
 
 ### Manual
 
