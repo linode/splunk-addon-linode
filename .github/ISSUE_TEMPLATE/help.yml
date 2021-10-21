@@ -3,6 +3,24 @@ description: You're pretty sure it's not a bug but you can't figure out why it's
 title: "[Help]: "
 labels: ["help wanted"]
 body:
+  - type: input
+    id: splunk-version
+    attributes:
+      label: Splunk Version
+      description: What version of Splunk are you using?
+      placeholder: Splunk Enterprise 8.2.1
+    validations:
+      required: true
+
+  - type: input
+    id: addon-version
+    attributes:
+      label: Add-on Version
+      description: What version of the Linode Add-on for Splunk are you using?
+      placeholder: 0.0.2
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
