@@ -23,11 +23,16 @@ Account Service Transfers|Collect service transfers from `/account/service-trans
 
 ## Installation
 
+### Splunkbase
+
+Install through [Splunkbase](https://splunkbase.splunk.com/app/5707/#/details)
+
 ### Manual
 
 The Splunk `.tgz` app file can be generated with the following command:
 
 ```shell
+pip install -r requirements-dev.txt
 make build
 ```
 
