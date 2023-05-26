@@ -1,2 +1,4 @@
 *.tar.gz
 TA-linode/bin/deps
+**/__pycache__/
+*.spl
