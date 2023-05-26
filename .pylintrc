@@ -9,4 +9,8 @@ disable=protected-access,
         unnecessary-pass,
         assignment-from-no-return,
         wrong-import-position,
-        broad-except
+        broad-except,
+        consider-using-f-string,
+        broad-exception-raised,
+        invalid-name,
+        unspecified-encoding
