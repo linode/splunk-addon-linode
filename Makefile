@@ -9,7 +9,7 @@ unittest:
 
 getdeps:
 	pip install -r requirements-dev.txt
-	pip install -r requirements.txt --target TA-linode/bin/deps
+	pip install -r requirements.txt --upgrade --target TA-linode/bin/deps
 
 lint:
     # Avoid linting pre-generated code
