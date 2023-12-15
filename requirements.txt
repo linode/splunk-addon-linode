@@ -1,1 +1,1 @@
-linode-api4==5.9.0
+linode-api4==5.11.0
