@@ -6,7 +6,7 @@ The Linode Add-on for Splunk collects account events from Linode.
 
 To install the app onto a Splunk instance, follow the steps outlined in the [installation section](#installation).
 
-Linode accounts can be can be configured in the `Configuration` tab of the Add-on. A read-only Linode API token is required when configuring an account. See the official [Linode API Documentation](https://www.linode.com/docs/guides/getting-started-with-the-linode-api/#get-an-access-token) for more details on generating an API token.
+Linode accounts can be configured in the `Configuration` tab of the Add-on. A read-only Linode API token is required when configuring an account. See the official [Linode API Documentation](https://www.linode.com/docs/guides/getting-started-with-the-linode-api/#get-an-access-token) for more details on generating an API token.
 
 Inputs are configured through the `Inputs` tab of the Add-on. Each input can have a specified index, Linode account, poll interval, and start date.  After an input is created, it will automatically begin polling Linode's API on the user-specified interval.
 
