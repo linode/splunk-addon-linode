@@ -1,3 +1,5 @@
+PYTHON := python3
+
 build: clean getdeps
 	slim package TA-linode
 
@@ -8,8 +10,8 @@ unittest:
 	pytest TA-linode/bin/tests
 
 getdeps:
-	pip install -r requirements-dev.txt
-	pip install -r requirements.txt --upgrade --target TA-linode/bin/deps
+	$(PYTHON) -m pip install -r requirements-dev.txt
+	$(PYTHON) -m pip install -r requirements.txt --upgrade --target TA-linode/bin/deps
 
 lint:
     # Avoid linting pre-generated code
