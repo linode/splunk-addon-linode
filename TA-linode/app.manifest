@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "2.0.0",
   "info": {
     "title": "Linode",
     "id": {
       "group": null,
       "name": "TA-linode",
-      "version": "0.0.4"
+      "version": "0.0.5"
     },
     "author": [
       {
@@ -49,5 +49,11 @@
     "splunk": {
       "Enterprise": "*"
     }
-  }
+  },
+  "supportedDeployments": [
+    "*"
+  ],
+  "targetWorkloads": [
+    "*"
+  ]
 }
