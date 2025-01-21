@@ -1,26 +1,30 @@
-# SPDX-FileCopyrightText: 2020 2020
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 """Credentials Management for REST Endpoint
 """
 
-from __future__ import absolute_import
 
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import object
 import json
 import urllib.parse
-from solnlib.credentials import (
-    CredentialManager,
-    CredentialNotExistException,
-)
 
-from .util import get_base_app_name
+from solnlib.credentials import CredentialManager, CredentialNotExistException
+
 from .error import RestError
-
+from .util import get_base_app_name
 
 __all__ = [
     "RestCredentialsContext",
@@ -28,7 +32,7 @@ __all__ = [
 ]
 
 
-class RestCredentialsContext(object):
+class RestCredentialsContext:
     """
     Credentials' context, including realm, username and password.
     """
@@ -73,7 +77,7 @@ class RestCredentialsContext(object):
         RestCredentials context ``password``.
         Load data from string.
         :param string: data has been decrypted
-        :type string: basestring
+        :type string: str
         :return:
         """
         try:
@@ -82,14 +86,14 @@ class RestCredentialsContext(object):
             raise RestError(500, "Fail to load encrypted string, invalid JSON")
 
 
-class RestCredentials(object):
+class RestCredentials:
     """
     Credential Management stored in passwords.conf
     """
 
     # Changed password constant to six '*' to make it consistent with solnlib password constant
-    PASSWORD = u"******"
-    EMPTY_VALUE = u""
+    PASSWORD = "******"
+    EMPTY_VALUE = ""
 
     def __init__(self, splunkd_uri, session_key, endpoint):
         self._splunkd_uri = splunkd_uri
@@ -146,7 +150,10 @@ class RestCredentials(object):
                     data[field_name] = self.PASSWORD
                 else:
                     # if the field value is '******', keep the original value
-                    original_clear_password = self._get(name)
+                    try:
+                        original_clear_password = self._get(name)
+                    except CredentialNotExistException:
+                        original_clear_password = None
                     if original_clear_password and original_clear_password.get(
                         field_name
                     ):
@@ -159,7 +166,10 @@ class RestCredentials(object):
             else:
                 # field not in data
                 # if the optional encrypted field is not passed, keep original if it exist
-                original_clear_password = self._get(name)
+                try:
+                    original_clear_password = self._get(name)
+                except CredentialNotExistException:
+                    original_clear_password = None
                 if original_clear_password and original_clear_password.get(field_name):
                     encrypting[field_name] = original_clear_password[field_name]
                     data[field_name] = self.PASSWORD
@@ -285,9 +295,7 @@ class RestCredentials(object):
             host=self._splunkd_info.hostname,
             port=self._splunkd_info.port,
         )
-
-        all_passwords = credential_manager._get_all_passwords()
-        # filter by realm
+        all_passwords = credential_manager.get_clear_passwords_in_realm()
         realm_passwords = [x for x in all_passwords if x["realm"] == self._realm]
         return self._merge_passwords(data, realm_passwords)
 
@@ -387,10 +395,7 @@ class RestCredentials(object):
     def _get(self, name):
         context = RestCredentialsContext(self._endpoint, name)
         mgr = self._get_manager(context)
-        try:
-            string = mgr.get_password(user=context.username())
-        except CredentialNotExistException:
-            return None
+        string = mgr.get_password(user=context.username())
         return context.load(string)
 
     def _filter(self, name, data, encrypted_data):

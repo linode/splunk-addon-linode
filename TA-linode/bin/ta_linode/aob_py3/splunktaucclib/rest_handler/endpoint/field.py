@@ -1,17 +1,26 @@
-# SPDX-FileCopyrightText: 2020 2020
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-from __future__ import absolute_import
 
-from builtins import object
 from ..error import RestError
-
 
 __all__ = ["RestField"]
 
 
-class RestField(object):
+class RestField:
     """
     REST Field.
     """
@@ -32,11 +41,11 @@ class RestField(object):
         self.validator = validator
         self.converter = converter
 
-    def validate(self, data, existing=None):
+    def validate(self, data, existing=None, validate_name=None):
         # update case: check required field in data
         if existing and self.name in data and not data.get(self.name) and self.required:
             raise RestError(400, "Required field is missing: %s" % self.name)
-        value = data.get(self.name)
+        value = data.get(self.name) if not validate_name else validate_name
         if not value and existing is None:
             if self.required:
                 raise RestError(400, "Required field is missing: %s" % self.name)
