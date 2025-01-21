@@ -1,15 +1,26 @@
-# SPDX-FileCopyrightText: 2020 Splunk Inc.
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2021 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 """
 Handles credentials related stuff
 """
 
-from builtins import str
-from builtins import range
-from builtins import object
 import re
+import warnings
+
 import defusedxml.minidom as xdm
 
 import splunktalib.common.util as util
@@ -33,11 +44,17 @@ class CredNotFound(CredException):
 
 
 def create_credential_manager(username, password, splunkd_uri, app, owner, realm):
+    warnings.warn(
+        "This function is deprecated. "
+        "Please see https://github.com/splunk/addonfactory-ta-library-python/issues/38",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     session_key = CredentialManager.get_session_key(username, password, splunkd_uri)
     return CredentialManager(splunkd_uri, session_key, app, owner, realm)
 
 
-class CredentialManager(object):
+class CredentialManager:
     """
     Credential related interfaces
     """
@@ -46,6 +63,12 @@ class CredentialManager(object):
         """
         :app: when creating/upating/deleting app is required
         """
+        warnings.warn(
+            "This class is deprecated. "
+            "Please see https://github.com/splunk/addonfactory-ta-library-python/issues/38",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         self._app = app
         self._splunkd_uri = splunkd_uri
@@ -81,14 +104,12 @@ class CredentialManager(object):
             "password": password,
         }
 
-        response, content = rest.splunkd_request(
-            eid, None, method="POST", data=postargs
-        )
+        response = rest.splunkd_request(eid, None, method="POST", data=postargs)
 
-        if response is None and content is None:
+        if response is None:
             raise CredException("Get session key failed.")
 
-        xml_obj = xdm.parseString(content)
+        xml_obj = xdm.parseString(response.text)
         session_nodes = xml_obj.getElementsByTagName("sessionKey")
         if not session_nodes:
             raise CredException("Invalid username or password.")
@@ -142,13 +163,13 @@ class CredentialManager(object):
         except CredException:
             payload = {"password": password}
             endpoint = self._get_endpoint(name)
-            response, _ = rest.splunkd_request(
+            response = rest.splunkd_request(
                 endpoint, self._session_key, method="POST", data=payload
             )
-            if not response or response.status not in (200, 201):
+            if not response or response.status_code not in (200, 201):
                 raise CredException(
                     "Unable to update password for username={}, status={}".format(
-                        name, response.status
+                        name, response.status_code
                     )
                 )
 
@@ -165,10 +186,10 @@ class CredentialManager(object):
         }
 
         endpoint = self._get_endpoint(name)
-        resp, content = rest.splunkd_request(
+        resp = rest.splunkd_request(
             endpoint, self._session_key, method="POST", data=payload
         )
-        if not resp or resp.status not in (200, 201, "200", "201"):
+        if not resp or resp.status_code not in (200, 201):
             raise CredException("Failed to encrypt username {}".format(name))
 
     def delete(self, name, throw=False):
@@ -213,14 +234,12 @@ class CredentialManager(object):
         """
 
         endpoint = self._get_endpoint(name)
-        response, content = rest.splunkd_request(
-            endpoint, self._session_key, method="DELETE"
-        )
+        response = rest.splunkd_request(endpoint, self._session_key, method="DELETE")
 
-        if response is not None and response.status in (404, "404"):
+        if response is not None and response.status_code == 404:
             if throw:
                 raise CredNotFound("Credential stanza not exits - {}".format(name))
-        elif not response or response.status not in (200, 201, "200", "201"):
+        elif not response or response.status_code not in (200, 201):
             if throw:
                 raise CredException(
                     "Failed to delete credential stanza {}".format(name)
@@ -289,11 +308,9 @@ class CredentialManager(object):
         """
 
         endpoint = self._get_endpoint()
-        response, content = rest.splunkd_request(
-            endpoint, self._session_key, method="GET"
-        )
-        if response and response.status in (200, 201, "200", "201") and content:
-            return xdp.parse_conf_xml_dom(content)
+        response = rest.splunkd_request(endpoint, self._session_key, method="GET")
+        if response and response.status_code in (200, 201) and response.text:
+            return xdp.parse_conf_xml_dom(response.text)
         raise CredException("Failed to get credentials")
 
     def get_clear_password(self, name=None):

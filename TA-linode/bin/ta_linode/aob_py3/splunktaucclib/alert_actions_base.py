@@ -1,18 +1,30 @@
-# SPDX-FileCopyrightText: 2020 2020
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-from __future__ import print_function
-from splunktaucclib.splunk_aoblib.setup_util import Setup_Util
-from splunktaucclib.splunk_aoblib.rest_helper import TARestHelper
-import logging
-from splunktaucclib.logging_helper import get_logger
-from splunktaucclib.cim_actions import ModularAction
-import requests
-from builtins import str
 import csv
 import gzip
+import logging
 import sys
+
+from solnlib import log
+
+from splunktaucclib.cim_actions import ModularAction
+from splunktaucclib.rest_handler import util
+from splunktaucclib.splunk_aoblib.rest_helper import TARestHelper
+from splunktaucclib.splunk_aoblib.setup_util import Setup_Util
 
 try:
     from splunk.clilib.bundle_paths import make_splunkhome_path
@@ -25,12 +37,9 @@ sys.path.insert(0, make_splunkhome_path(["etc", "apps", "Splunk_SA_CIM", "lib"])
 class ModularAlertBase(ModularAction):
     def __init__(self, ta_name, alert_name):
         self._alert_name = alert_name
-        # self._logger_name = "modalert_" + alert_name
         self._logger_name = alert_name + "_modalert"
-        self._logger = get_logger(self._logger_name)
-        super(ModularAlertBase, self).__init__(
-            sys.stdin.read(), self._logger, alert_name
-        )
+        self._logger = log.Logs().get_logger(self._logger_name)
+        super().__init__(sys.stdin.read(), self._logger, alert_name)
         self.setup_util_module = None
         self.setup_util = None
         self.result_handle = None
@@ -106,22 +115,8 @@ class ModularAlertBase(ModularAction):
         return self.setup_util.get_proxy_settings()
 
     def _get_proxy_uri(self):
-        uri = None
         proxy = self.get_proxy()
-        if proxy and proxy.get("proxy_url") and proxy.get("proxy_type"):
-            uri = proxy["proxy_url"]
-            if proxy.get("proxy_port"):
-                uri = "{0}:{1}".format(uri, proxy.get("proxy_port"))
-            if proxy.get("proxy_username") and proxy.get("proxy_password"):
-                uri = "{0}://{1}:{2}@{3}/".format(
-                    proxy["proxy_type"],
-                    proxy["proxy_username"],
-                    proxy["proxy_password"],
-                    uri,
-                )
-            else:
-                uri = "{0}://{1}".format(proxy["proxy_type"], uri)
-        return uri
+        return util.get_proxy_uri(proxy)
 
     def send_http_request(
         self,
@@ -150,71 +145,10 @@ class ModularAlertBase(ModularAction):
         )
 
     def build_http_connection(self, config, timeout=120, disable_ssl_validation=False):
-        from httplib2 import socks, ProxyInfo, Http
-
-        """
-        :config: dict like, proxy and account information are in the following
-                format {
-                    "username": xx,
-                    "password": yy,
-                    "proxy_url": zz,
-                    "proxy_port": aa,
-                    "proxy_username": bb,
-                    "proxy_password": cc,
-                    "proxy_type": http,http_no_tunnel,sock4,sock5,
-                    "proxy_rdns": 0 or 1,
-                }
-        :return: Http2.Http object
-        """
-        if not config:
-            config = {}
-
-        proxy_type_to_code = {
-            "http": socks.PROXY_TYPE_HTTP,
-            "http_no_tunnel": socks.PROXY_TYPE_HTTP_NO_TUNNEL,
-            "socks4": socks.PROXY_TYPE_SOCKS4,
-            "socks5": socks.PROXY_TYPE_SOCKS5,
-        }
-        if config.get("proxy_type") in proxy_type_to_code:
-            proxy_type = proxy_type_to_code[config["proxy_type"]]
-        else:
-            proxy_type = socks.PROXY_TYPE_HTTP
-
-        rdns = config.get("proxy_rdns")
-
-        proxy_info = None
-        if config.get("proxy_url") and config.get("proxy_port"):
-            if config.get("proxy_username") and config.get("proxy_password"):
-                proxy_info = ProxyInfo(
-                    proxy_type=proxy_type,
-                    proxy_host=config["proxy_url"],
-                    proxy_port=int(config["proxy_port"]),
-                    proxy_user=config["proxy_username"],
-                    proxy_pass=config["proxy_password"],
-                    proxy_rdns=rdns,
-                )
-            else:
-                proxy_info = ProxyInfo(
-                    proxy_type=proxy_type,
-                    proxy_host=config["proxy_url"],
-                    proxy_port=int(config["proxy_port"]),
-                    proxy_rdns=rdns,
-                )
-        if proxy_info:
-            http = Http(
-                proxy_info=proxy_info,
-                timeout=timeout,
-                disable_ssl_certificate_validation=disable_ssl_validation,
-            )
-        else:
-            http = Http(
-                timeout=timeout,
-                disable_ssl_certificate_validation=disable_ssl_validation,
-            )
-
-        if config.get("username") and config.get("password"):
-            http.add_credentials(config["username"], config["password"])
-        return http
+        raise NotImplementedError(
+            "Replace the usage of this function to send_http_request function of same class "
+            "or use requests.request method"
+        )
 
     def process_event(self, *args, **kwargs):
         raise NotImplemented()
@@ -231,7 +165,7 @@ class ModularAlertBase(ModularAction):
                 self.pre_handle(num, result)
                 for num, result in enumerate(csv.DictReader(self.result_handle))
             )
-        except IOError:
+        except OSError:
             msg = "Error: {}."
             self.log_error(msg.format("No search result. Cannot send alert action."))
             sys.exit(2)
@@ -247,7 +181,7 @@ class ModularAlertBase(ModularAction):
     def run(self, argv):
         status = 0
         if len(argv) < 2 or argv[1] != "--execute":
-            msg = 'Error: argv="{}", expected="--execute"'.format(argv)
+            msg = f'Error: argv="{argv}", expected="--execute"'
             print(msg, file=sys.stderr)
             sys.exit(1)
 
@@ -266,7 +200,7 @@ class ModularAlertBase(ModularAction):
 
         try:
             status = self.process_event()
-        except IOError:
+        except OSError:
             msg = "Error: {}."
             self.log_error(msg.format("No search result. Cannot send alert action."))
             sys.exit(2)

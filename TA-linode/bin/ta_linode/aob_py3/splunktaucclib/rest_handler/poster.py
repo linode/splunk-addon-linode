@@ -1,23 +1,31 @@
-# SPDX-FileCopyrightText: 2020 2020
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-from __future__ import absolute_import
 
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import object
-import urllib.request, urllib.parse, urllib.error
-import json
 import re
+import urllib.error
+import urllib.parse
+import urllib.request
 
+import requests
 from splunk import admin, rest
-
-from splunktalib.rest import splunkd_request, code_to_msg, build_http_connection
 from splunktalib.common.util import is_true
+from splunktalib.rest import code_to_msg, splunkd_request
 
-from . import base
+from . import base, util
 from .error_ctl import RestHandlerError as RH_Err
 
 
@@ -34,7 +42,7 @@ class PosterHandler(base.BaseRestHandler):
         assert hasattr(self, "modelMap") and isinstance(
             self.modelMap, dict
         ), RH_Err.ctl(
-            1002, msgx="{}.modelMap".format(self.__class__.__name__), shouldPrint=False
+            1002, msgx=f"{self.__class__.__name__}.modelMap", shouldPrint=False
         )
 
         if self.requestedAction != admin.ACTION_EDIT:
@@ -46,7 +54,7 @@ class PosterHandler(base.BaseRestHandler):
     def setModel(self, name):
         # get model for object
         if name not in self.modelMap:
-            RH_Err.ctl(404, msgx="object={name}".format(name=name))
+            RH_Err.ctl(404, msgx=f"object={name}")
         self.model = self.modelMap[name]
 
         # load attributes from model
@@ -67,7 +75,8 @@ class PosterHandler(base.BaseRestHandler):
             app=app,
         )
         proxy_enabled = proxy_info.get("proxy_enabled", False)
-        http = build_http_connection(proxy_info if proxy_enabled else {})
+        proxy_uri = util.get_proxy_uri(proxy_info if proxy_enabled else {})
+        proxies = {"http": proxy_uri, "https": proxy_uri}
         try:
             url = self.callerArgs.data["splunk_poster_url"][0]
             for regex in self.allowedURLs:
@@ -89,15 +98,18 @@ class PosterHandler(base.BaseRestHandler):
                 "Content-Type": "application/x-www-form-urlencoded",
             }
 
-            resp, content = http.request(
-                url,
+            resp = requests.request(  # nosemgrep: python.requests.best-practice.use-raise-for-status.use-raise-for-status  # noqa: E501
                 method=method,
+                url=url,
                 headers=headers,
-                body=urllib.parse.urlencode(payload),
+                data=urllib.parse.urlencode(payload),
+                timeout=120,
+                proxies=proxies,
+                verify=True,
             )
-            content = json.loads(content)
-            if resp.status not in (200, 201, "200", "201"):
-                RH_Err.ctl(resp.status, msgx=content)
+            content = resp.json()
+            if resp.status_code not in (200, 201):
+                RH_Err.ctl(resp.status_code, msgx=content)
 
             for key, val in content.items():
                 confInfo[self.callerArgs.id][key] = val
@@ -125,7 +137,7 @@ class PosterModel(base.BaseModel):
     allowedMethods = ()
 
 
-class PosterMapping(object):
+class PosterMapping:
     """Mapping from object name to poster model."""
 
     # mapping object name to handler model class
@@ -159,17 +171,12 @@ class PosterMapping(object):
             proxyInfoEndpoint=self.proxyInfoEndpoint,
         )
         data = {"output_mode": "json", "--get-clear-credential--": "1"}
-        resp, cont = splunkd_request(url, sessionKey, data=data, retry=3)
-        if resp is None or resp.status != 200:
-            RH_Err.ctl(
-                1104,
-                msgx="failed to load proxy info. {err}".format(
-                    err=code_to_msg(resp, cont) if resp else cont
-                ),
-            )
+        resp = splunkd_request(url, sessionKey, data=data, retry=3)
+        if resp is None or resp.status_code != 200:
+            RH_Err.ctl(1104, msgx=f"failed to load proxy info. {code_to_msg(resp)}")
 
         try:
-            proxy_info = json.loads(cont)["entry"][0]["content"]
+            proxy_info = resp.json()["entry"][0]["content"]
         except IndexError | KeyError:
             proxy_info = {}
 
