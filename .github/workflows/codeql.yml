@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-    - cron: '0 13 * * 5'
+    - cron: "0 13 * * 5"
 
 jobs:
   analyze:
@@ -32,6 +32,10 @@ jobs:
         build-mode: ${{ matrix.build-mode }}
         queries: security-and-quality
 
+        # Exclude packages bundled by Splunk AOB
+        config: |
+          paths-ignore:
+            - TA-linode/bin/ta_linode/aob_py3
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
