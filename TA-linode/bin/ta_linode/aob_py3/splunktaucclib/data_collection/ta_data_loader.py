@@ -1,28 +1,35 @@
-# SPDX-FileCopyrightText: 2020 2020
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 """
 Data Loader main entry point
 """
 
 
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import object
+import configparser
 import os.path as op
 import queue
-import configparser
-
 
 import splunktalib.concurrent.concurrent_executor as ce
-import splunktalib.timer_queue as tq
 import splunktalib.schedule.job as sjob
+import splunktalib.timer_queue as tq
 from splunktalib.common import log
 
 
-class TADataLoader(object):
+class TADataLoader:
     """
     Data Loader boots all underlying facilities to handle data collection
     """
@@ -32,7 +39,7 @@ class TADataLoader(object):
         @configs: a list like object containing a list of dict
         like object. Each element shall implement dict.get/[] like interfaces
         to get the value for a key.
-        @job_scheduler: schedulering the jobs. shall implement get_ready_jobs
+        @job_scheduler: scheduling the jobs. shall implement get_ready_jobs
         @event_writer: write_events
         """
 
@@ -51,7 +58,6 @@ class TADataLoader(object):
             return
         self._started = True
 
-        self._event_writer.start()
         self._executor.start()
         self._timer_queue.start()
         self._scheduler.start()
@@ -74,7 +80,6 @@ class TADataLoader(object):
         self._scheduler.tear_down()
         self._timer_queue.tear_down()
         self._executor.tear_down()
-        self._event_writer.tear_down()
         log.logger.info("DataLoader stopped.")
 
     def _wait_for_tear_down(self):
@@ -141,8 +146,8 @@ class TADataLoader(object):
         return settings
 
 
-class GlobalDataLoader(object):
-    """ Singleton, inited when started"""
+class GlobalDataLoader:
+    """Singleton, inited when started"""
 
     __instance = None
 
@@ -159,13 +164,13 @@ class GlobalDataLoader(object):
 
 def create_data_loader(meta_configs):
     """
-    create a data loader with default event_writer, job_scheudler
+    create a data loader with default event_writer, job_scheduler
     """
 
-    import splunktalib.event_writer as ew
+    import solnlib.modular_input.event_writer as ew
     import splunktalib.schedule.scheduler as sched
 
-    writer = ew.EventWriter()
+    writer = ew.ClassicEventWriter()
     scheduler = sched.Scheduler()
     loader = GlobalDataLoader.get_data_loader(meta_configs, scheduler, writer)
     return loader

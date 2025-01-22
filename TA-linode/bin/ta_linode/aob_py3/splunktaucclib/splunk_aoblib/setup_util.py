@@ -1,17 +1,25 @@
-# SPDX-FileCopyrightText: 2020 2020
 #
-# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-from builtins import str
-from builtins import range
-from builtins import object
 import json
 import os
 
 import solnlib.utils as utils
 
 from splunktaucclib.global_config import GlobalConfig, GlobalConfigSchema
-
 
 """
 Usage Examples:
@@ -92,13 +100,13 @@ ALL_SETTING_TYPES = [
 
 def get_schema_path():
     dirname = os.path.dirname
-    basedir = dirname(dirname(dirname((dirname(__file__)))))
+    basedir = dirname(dirname(dirname(dirname(__file__))))
     return os.path.join(
         basedir, "appserver", "static", "js", "build", "globalConfig.json"
     )
 
 
-class Setup_Util(object):
+class Setup_Util:
     def __init__(self, uri, session_key, logger=None):
         self.__uri = uri
         self.__session_key = session_key
@@ -177,9 +185,7 @@ class Setup_Util(object):
                     for s in s_v:
                         field_type = s.get("type")
                         if not field_type:
-                            self.log_error(
-                                "unknown type for customized var:{}".format(s)
-                            )
+                            self.log_error(f"unknown type for customized var:{s}")
                             continue
                         self.__cached_global_settings["customized_settings"][
                             s.get("name", "")
@@ -236,22 +242,22 @@ class Setup_Util(object):
         log_level = "INFO"
         log_settings = self._parse_conf(LOG_SETTINGS)
         if log_settings is None:
-            self.log_info("Log level is not set, use default INFO")
+            self.log_debug("Log level is not set, use default INFO")
         else:
             log_level = log_settings.get(LOG_LEVEL_KEY, None)
             if not log_level:
-                self.log_info("Log level is not set, use default INFO")
+                self.log_debug("Log level is not set, use default INFO")
                 log_level = "INFO"
         return log_level
 
     def get_proxy_settings(self):
         proxy_settings = self._parse_conf(PROXY_SETTINGS)
         if proxy_settings is None:
-            self.log_info("Proxy is not set!")
+            self.log_debug("Proxy is not set!")
             return {}
         proxy_enabled = proxy_settings.get(PROXY_ENABLE_KEY)
         if not proxy_enabled:
-            self.log_info("Proxy is not enabled!")
+            self.log_debug("Proxy is not enabled!")
             return {}
         proxy_settings = {
             "proxy_url": proxy_settings.get("proxy_url", ""),
@@ -270,7 +276,7 @@ class Setup_Util(object):
             if account.get("name", None) == account_id:
                 return account
         self.log_error(
-            "Credential account with account id {} can not be found".format(account_id)
+            f"Credential account with account id {account_id} can not be found"
         )
         return None
 
@@ -279,9 +285,7 @@ class Setup_Util(object):
         for account in credential_settings:
             if account.get("username", None) == username:
                 return account
-        self.log_error(
-            "Credential account with username {} can not be found".format(username)
-        )
+        self.log_error(f"Credential account with username {username} can not be found")
         return None
 
     def get_customized_setting(self, key):
